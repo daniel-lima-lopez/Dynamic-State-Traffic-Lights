@@ -39,16 +39,22 @@ import traci  # noqa
 
 
 
+# The program looks like this
+#    <tlLogic id="0" type="static" programID="0" offset="0">
+# the locations of the tls are      NESW
+#        <phase duration="31" state="GrGr"/>
+#        <phase duration="6"  state="yryr"/>
+#        <phase duration="31" state="rGrG"/>
+#        <phase duration="6"  state="ryry"/>
+#    </tlLogic>
 
 class Traffic_light:
     def __init__(self, id, edge1,edge2,edge3,edge4):
-    
         self.ID=id
         self.edge1=edge1
         self.edge2=edge2
         self.edge3=edge3
         self.edge4=edge4
-        self.phase=self.get_phase()
     def lastcar1(self):
         return traci.edge.getLastStepVehicleNumber(self.edge1)
     def lastcar2(self):
@@ -57,28 +63,6 @@ class Traffic_light:
         return traci.edge.getLastStepVehicleNumber(edge)
     def getwait(self,edge_id):
         return traci.edge.getWaitingTime(edge_id)
-        
-    def get_phase_time(self):
-        return traci.trafficlight.getPhaseDuration(self.ID)
-    def get_phase(self):
-        return traci.trafficlight.getPhase(self.ID)
-        
-    def evalu(self,step):
-        print(self.get_phase_time(),self.get_phase())
-        if step%40==0:
-            self.set_phase(self.phase+1)
-        elif (self.phase%2)-1==0:
-            self.set_phase(self.phase+1)
-            
-    def set_phase(self,num):
-        if num>7:
-            self.phase=0
-        else:
-            self.phase=num
-        traci.trafficlight.setPhase(self.ID,self.phase)
-        
-        
-                        
     def control(self,other,phase): 
        # print(traci.trafficlight.getPhaseDuration(self.ID))
         if(self.lastcar1()>self.lastcar2() and self.lastcar1()>10):
@@ -91,7 +75,31 @@ class Traffic_light:
                 traci.trafficlight.setPhase(self.ID,phase[1])
         elif(other.lastcar1()-self.lastcar1()>0 and self.lastcar2()<=5):
             traci.trafficlight.setPhase(self.ID,phase[0])
-    
+    def control2(self,other,phase,edge3):
+        if(self.lastcar1()+self.lastcar(edge3)>self.lastcar2() and self.lastcar1()>15):
+        #    print(self.getwait(self.edge2))
+            if(self.getwait(self.edge2)<200):
+                traci.trafficlight.setPhase(self.ID,phase[0])
+        elif(self.lastcar1()+self.lastcar(edge3)<self.lastcar2() and self.lastcar2()>6):
+            traci.trafficlight.setPhase(self.ID,phase[1])
+            if(self.getwait(self.edge1)<200):
+                traci.trafficlight.setPhase(self.ID,phase[1])
+        elif(other.lastcar1()-self.lastcar1()-self.lastcar(edge3)>0 and self.lastcar1()<=5):
+            traci.trafficlight.setPhase(self.ID,phase[0])
+    def control3(self,other,phase,edge3):
+       # print(traci.trafficlight.getPhaseDuration(self.ID))
+        if(self.lastcar1()>self.lastcar2() and self.lastcar1()>10 and self.getwait(self.edge2)<200):
+         #   print(self.getwait(self.edge2))
+            traci.trafficlight.setPhase(self.ID,phase[0])
+        elif(self.lastcar1()<self.lastcar2() and self.lastcar2()>6 and self.getwait(self.edge1)<200):
+            traci.trafficlight.setPhase(self.ID,phase[1])
+        elif(other.lastcar1()-self.lastcar1()>0 and self.lastcar2()<=5):
+            traci.trafficlight.setPhase(self.ID,phase[0])
+        elif(self.getwait(edge3)>100):
+            if(len(phase)==3):
+                traci.trafficlight.setPhase(self.ID,phase[2])
+            else:
+                traci.trafficlight.setPhase(self.ID,phase[1]) 
 def metrics(edge,val):
     if val:
         return traci.edge.getWaitingTime(edge)
@@ -100,16 +108,17 @@ def metrics(edge,val):
 def run():
     """execute the TraCI control loop"""
     step = 0
-    t0=Traffic_light("S1","E1","-E3","E5","-E4")
-    print(t0.get_phase_time(),t0.get_phase())
+    t0=Traffic_light("T0","E1","-E3","E5","-E4")
+ 
     A=[]
     B=[]
     while traci.simulation.getMinExpectedNumber() > 0:
         traci.simulationStep()
-        if step%5==0:
-            t0.evalu(step)
-            A.append(metrics("E1",True))
-            B.append(metrics("E1",False))
+     #   metrics("279868539#2")
+#        print(t1.lastcar1())
+       # t0.control2(t0,(2,0),"28383667#1")
+        A.append(metrics("E1",True))
+        B.append(metrics("E1",False))
         if step>1000:
             break  
         step += 1
