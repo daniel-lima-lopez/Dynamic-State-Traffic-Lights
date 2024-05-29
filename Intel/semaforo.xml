@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2024-05-28 19:22:49 by Eclipse SUMO netedit Version 1.14.1
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
+
+    <output>
+        <output-file value="C:\Users\hecto\Sumo\osm.net.xml"/>
+    </output>
+
+    <processing>
+        <offset.disable-normalization value="true"/>
+    </processing>
+
+    <junctions>
+        <no-turnarounds value="true"/>
+    </junctions>
+
+    <netedit>
+        <route-files value="C:\Users\hecto\Sumo\osm.rou.xml"/>
+    </netedit>
+
+</configuration>
+-->
+
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <tlLogic id="S1" type="static" programID="0" offset="0">
+        <phase duration="42" state="rrGgrrrr"/>
+        <phase duration="5" state="rryyrrrr"/>
+        <phase duration="42" state="rrrrGgrr"/>
+        <phase duration="5" state="rrrryyrr"/>
+        <phase duration="42" state="rrrrrrGg"/>
+        <phase duration="5" state="rrrrrryy"/>
+        <phase duration="42" state="Ggrrrrrr"/>
+        <phase duration="5" state="yyrrrrrr"/>
+    </tlLogic>
+</additional>
