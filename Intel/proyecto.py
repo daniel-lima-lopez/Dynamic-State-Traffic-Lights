@@ -69,7 +69,6 @@ class Traffic_light:
             self.set_phase(self.phase+1)
         elif (self.phase%2)-1==0:
             self.set_phase(self.phase+1)
-        traci.trafficlight.setPhase(self.ID,self.phase)
             
     def set_phase(self,num):
         if num>7:
