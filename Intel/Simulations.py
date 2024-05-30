@@ -153,7 +153,7 @@ class SimStateNN:
         es = 4 # numero de configuraciones del semaforo
 
         self.NN = nnc.ControlState(cs=4, opts=es)
-        self.NN.predict([[0. for i in range(cs)]]) ## llamada auxiliar para construir el nodo de la red
+        self.NN.predict(np.array([[0. for i in range(cs)]])) ## llamada auxiliar para construir el nodo de la red
 
         # configura la arquitectura con la configuracion de gen
         self.NN.set_phen(gen)
@@ -262,8 +262,9 @@ if __name__ == '__main__':
     # ejemplo red neuronal
     max_steps = 4000 # maximo de steps en la simulacion antes de forzar el cierre
     np.random.seed(0) # semilla del gen
-    gen = np.random.normal(loc=0.0, scale=0.2, size=(756,)) # 756 es el numero de parametros en la red
-    
+    gen = np.random.normal(loc=0.0, scale=0.2, size=(756,))# 756 es el numero de parametros en la red
+    print(gen)
+    print(gen.shape)
     # instanciamos la simulacion
     test = SimStateNN(gen=gen, seed=78, gui=False, verbose=False, worst=max_steps)
 

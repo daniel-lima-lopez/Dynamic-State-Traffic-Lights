@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import os 
 from pymoo.core.crossover import Crossover
 from pymoo.operators.crossover.pntx import TwoPointCrossover
 #from pymoo.core.problem import ElementwiseProblem
@@ -12,18 +13,19 @@ from pymoo.termination import get_termination
 from pymoo.operators.sampling.rnd import IntegerRandomSampling
 from pymoo.operators.crossover.sbx import SBX
 from pymoo.operators.mutation.pm import PM
+from pymoo.operators.mutation.bitflip import BitflipMutation
 from pymoo.util.display.column import Column
 from pymoo.util.display.output import Output
 from pymoo.algorithms.soo.nonconvex.ga import GA
 
-#from ipynb.fs.full.test_RNN import TraficLights, Control
+from NNControls import *
+from Simulations import *
 
 class MyProblem(Problem):
 	def __init__(self,waitcar,numcar, n_atri,num_o,num_est, l, u):
 		self.Wait=waitcar
 		self.Car=numcar
 		self.n_atri=n_atri# tama\~no genotipo
-		self.model=Control(num_est)
 		super().__init__(n_var=self.n_atri,
 			n_obj=num_o,
 			n_eq_constr=0,
@@ -32,25 +34,20 @@ class MyProblem(Problem):
         
 	def _evaluate(self, x, out, *args, ** kwargs):
 		# generar los trips
-		os.build()
+		f=[]
+		se=np.random.randint(0,1000)
+		max_steps = 4000
+		print(se)
+		print(x[0].shape)
 		for i in range(x.shape[0]):
 			# se actualiza la red con la configuracion del genotipo
-			problem.model.set_phen(x[i])
-			#self.model.set_phen(x[i])
+			red=SimStateNN(gen=x[i], seed=se, gui=False, verbose=False, worst=max_steps)
+			red.run()
+			f.append(red.fitness("f0"))
 
-			# la red toma control de la simulacion
-			fi = Simulacion(self.model, rutai)
-
-
-			
-
-
-
-			#aqui deberia evual el estado i+1 y compararlo con los datos
-			#iniciales proporcionados por hector
-
-
-		out["F"]= [f1]	
+		f=np.array(f)
+		#f=f.reshape((100,1))
+		out["F"]= f	
 		#out["H"]=[phi]
                     
 
@@ -96,9 +93,11 @@ if __name__=="__main__":
 	waitcar=np.loadtxt("wait.csv")
 	waitcar=waitcar.reshape((waitcar.shape[0],1))
 	numcar=np.loadtxt("numcar.csv")
-	numcar=np.reshape((numcar.shape[0],1))
-	len_a=789;
+	print(numcar.shape[0])
+	numcar=numcar.reshape((numcar.shape[0],1))
+	len_a=756;
 	num_o=1;
+	num_est=8;
 	print(np.iinfo(np.int32).min)
 	#l=np.array([np.iinfo(np.int32).min for i in range(len_a)])
 	#u=np.array([np.iinfo(np.int32).max for i in range(len_a)])
@@ -106,11 +105,11 @@ if __name__=="__main__":
 	u=np.array([1 for i in range(len_a)])
 
 	prob=MyProblem(waitcar,numcar,len_a,num_o,num_est, l, u)
-	algorithm= NSGA2(
+	algorithm= GA(
 		pop_size=100,
 		sampling=MySampling(),
-		crossover=TwoPointCrossover(prob=0.9),
-		mutation=MyMutation(1/4),
+		#crossover=TwoPointCrossover(prob=0.9),
+		#mutation=BitflipMutation(1/len_a),
     eliminate_duplicates=True
 		)
     
@@ -125,9 +124,9 @@ if __name__=="__main__":
 		#output=outS
 		)
 
-	pareto_op = np.array(res.X)
-	pareto_fen = np.array(res.F)
+	optimo = np.array(res.X)
+	fen = np.array(res.F)
 	print(pareto_op)
 	print(pareto_fen)
-	np.savetxt("testores.txt", pareto_op, delimiter=" ", fmt="%0.3f")
+	np.savetxt("optimo.txt", optimo, delimiter=" ", fmt="%0.3f")
 
