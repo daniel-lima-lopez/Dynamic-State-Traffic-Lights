@@ -49,17 +49,16 @@ class Traffic_light:
         self.edge3=edge3
         self.edge4=edge4
         self.phase=self.get_phase()
-    def lastcar1(self):
-        return traci.edge.getLastStepVehicleNumber(self.edge1)
-    def lastcar2(self):
-        return traci.edge.getLastStepVehicleNumber(self.edge2)
+        
     def lastcar(self,edge):
         return traci.edge.getLastStepVehicleNumber(edge)
+        
     def getwait(self,edge_id):
         return traci.edge.getWaitingTime(edge_id)
         
     def get_phase_time(self):
         return traci.trafficlight.getPhaseDuration(self.ID)
+        
     def get_phase(self):
         return traci.trafficlight.getPhase(self.ID)
         
@@ -79,18 +78,6 @@ class Traffic_light:
         
         
                         
-    def control(self,other,phase): 
-       # print(traci.trafficlight.getPhaseDuration(self.ID))
-        if(self.lastcar1()>self.lastcar2() and self.lastcar1()>10):
-        #    print(self.getwait(self.edge2))
-            if(self.getwait(self.edge2)<200):
-                traci.trafficlight.setPhase(self.ID,phase[0])
-        elif(self.lastcar1()<self.lastcar2() and self.lastcar2()>6):
-            traci.trafficlight.setPhase(self.ID,phase[1])
-            if(self.getwait(self.edge1)<200):
-                traci.trafficlight.setPhase(self.ID,phase[1])
-        elif(other.lastcar1()-self.lastcar1()>0 and self.lastcar2()<=5):
-            traci.trafficlight.setPhase(self.ID,phase[0])
     
 def metrics(edge,val):
     if val:
@@ -137,7 +124,7 @@ if __name__ == "__main__":
         sumoBinary = checkBinary('sumo')
     else:
         sumoBinary = checkBinary('sumo-gui')
-
+    sumoBinary = checkBinary('sumo')
     # first, generate the route file for this simulation
 
     # this is the normal way of using traci. sumo is started as a
