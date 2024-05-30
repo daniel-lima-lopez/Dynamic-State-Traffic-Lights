@@ -31,8 +31,18 @@ class MyProblem(Problem):
 			xu=u)
         
 	def _evaluate(self, x, out, *args, ** kwargs):
+		# generar los trips
+		os.build()
 		for i in range(x.shape[0]):
+			# se actualiza la red con la configuracion del genotipo
 			problem.model.set_phen(x[i])
+			#self.model.set_phen(x[i])
+
+			# la red toma control de la simulacion
+			fi = Simulacion(self.model, rutai)
+
+
+			
 
 
 
@@ -40,7 +50,7 @@ class MyProblem(Problem):
 			#iniciales proporcionados por hector
 
 
-		out["F"]= [f1,f2]	
+		out["F"]= [f1]	
 		#out["H"]=[phi]
                     
 
