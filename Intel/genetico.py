@@ -16,6 +16,8 @@ from pymoo.util.display.column import Column
 from pymoo.util.display.output import Output
 from pymoo.algorithms.soo.nonconvex.ga import GA
 
+from test_RNN
+
 class MyProblem(Problem):
 	def __init__(self,waitcar,numcar, n_atri,num_o, l, u):
 		self.Wait=waitcar
