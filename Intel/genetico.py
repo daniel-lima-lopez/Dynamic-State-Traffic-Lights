@@ -22,7 +22,7 @@ class MyProblem(Problem):
 	def __init__(self,waitcar,numcar, n_atri,num_o,num_est, l, u):
 		self.Wait=waitcar
 		self.Car=numcar
-		self.n_atri=n_atri
+		self.n_atri=n_atri# tama\~no genotipo
 		self.model=Control(num_est)
 		super().__init__(n_var=self.n_atri,
 			n_obj=num_o,
@@ -33,7 +33,12 @@ class MyProblem(Problem):
 	def _evaluate(self, x, out, *args, ** kwargs):
 		for i in range(x.shape[0]):
 			problem.model.set_phen(x[i])
-			pred=problem.model.predict()
+
+
+
+			#aqui deberia evual el estado i+1 y compararlo con los datos
+			#iniciales proporcionados por hector
+
 
 		out["F"]= [f1,f2]	
 		#out["H"]=[phi]
