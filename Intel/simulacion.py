@@ -55,111 +55,6 @@ class Traffic_light:
             self.set_phase(self.phase+1)
             
     def set_phase(self,num):
-        
-
-        '''
-        e0: semaforo 0 en verde
-        e2: semaforo 2 en verde
-        e4: semaforo 4 en verde
-        e6: semaforo 6 en verde
-
-        e0 -> e1 -> e6
-        e0
-        get_phase()+1
-        e1
-        set_phase(epredi)
-        5s
-
-        
-        
-        David5
-        caso diferente
-        set_phase(epred_current)(5s) -> set_pahese(epred_current+1) -> set_phase(epred_next)
-         
-        caso igual
-        set_phase(epred_current)(5s) -> setphase(epred_next)
-        
-        if step%5==0:
-            id_phase=Control()
-            if (get_phase==id_phase):
-                pass
-            else:
-                set_phase(get_phase+1)
-                
-                
-        
-        
-
-
-
-        e0: semaforo 0 en verde
-        e2: semaforo 2 en verde
-        e4: semaforo 4 en verde
-        e6: semaforo 6 en verde
-
-        e1: semaforo 0 en amarillo
-        e3: semaforo 2 en amarillo
-        e5: semaforo 4 en amarillo
-        e7: semaforo 6 en amarillo 
-            
-
-
-        #KAMIGOD    
-        e6  e7  e0
-        e0  e1  e6
-        ei = 0 # estado inicial
-        steps = 0
-        while not finish:
-            simulationStep()
-            if steps%2==0:
-                if getphase%2-1==0 #e1 impar
-                    setphase(id_phase) #e6
-            if steps % 5 == 0:
-                get_phase #e0
-                id_phase = control() 
-                id_phase #e6
-                if id==ini:
-                    pass
-                else:
-                    set_phase(get_phase+1) #e1
-            
-            steps += 1
-
-
-        # DANIEL ei -> ei+1 -> epred
-        ei = 0 # estado inicial
-        steps = 0
-        dy = 2 # delta amarillo
-        dg = 10 # delta verde
-        auxt = 0
-        isGreen = True
-        i = 1
-        while not finish:
-            simulationStep()
-            
-            if isGreen and auxt==dg: # si estamos con semaforo verde y se alcanzo dg
-                id_pred = Control()
-                auxt = 0
-                if ei = id_pred: # si se predice el mismo estado al actual
-                    pass
-                else: # si el estado predicho es distinto
-                    isGreen = False
-                    set_phase(ei+1) # estado siguiente al actual (amarillo)
-                    ei = ei+1 # se actualiza el estado
-            else:
-                if auxt==dy: # si se alcanzo dy
-                    set_phase(id_pred)
-                    ei = id_pred # actualiza el estado
-                    isGreen = True
-                    auxt = 0
-                
-            auxt += 1
-            steps += 1
-            
-        
-
-        ...
-        '''
         if num>7:
             self.phase=0
         else:
@@ -171,48 +66,48 @@ class Traffic_light:
         
 def control(cs):
     #print(cs)
-    return random.randint(0,8)          
+    return random.choice([0, 2, 4, 6])   
         
 def run(control=control):
     """execute the TraCI control loop"""
-    step = 0
+    ei = 0 # estado inicial
+    steps = 0
+    dy = 2 # delta amarillo
+    dg = 10 # delta verde
+    auxt = 0
+    isGreen = True
+    i = 1
     t0=Traffic_light("S1","E1","-E3","E5","-E4")
-    #print(t0.get_phase_time(),t0.get_phase())
-    
     A=[]
     B=[]
-
-    f1 = 0
-    f2 = 0
-    
-    
+    f1=0
+    f2=0
+    id_pred=0
     while traci.simulation.getMinExpectedNumber() > 0:
         traci.simulationStep()
         
-        if step%t0.dt==0:
-            
-            # calcular fi
-            ns = np.array([t0.get_num_car(ei) for ei in ["E1","-E3","E5","-E4"]])
-            ts = np.array([t0.getwait(ei) for ei in ["E1","-E3","E5","-E4"]])
-
-            id_phase = control(ns) # devuelve el id de la siguiente fase
-
-            if id_phase==t0.get_phase():
-                pass
-            else:
-                t0.set_phase(id_phase+1)
-                if state = 'transicion':
-                    t0.set_trans(id_phase)
-                id state = 'new':
-                    t0.set_phase(id_phase)
-
-            
-            #t0.evalu(step)
-            t0.set_phase(id_phase)
-            
-            
+        if auxt==dg and isGreen:
+            id_pred=control(1)
+            auxt=0
+            ns = np.array([t0.get_num_car(id) for id in ["E1","-E3","E5","-E4"]])
+            ts = np.array([t0.getwait(id) for id in ["E1","-E3","E5","-E4"]])
             f1 += np.sum(ns)
             f2 += np.sum(ts)
+            if t0.get_phase()==id_pred:
+                pass
+            else:
+                isGreen=False
+                t0.set_phase(t0.get_phase()+1)
+                ei=ei+1
+                
+        elif auxt==dy and not isGreen :
+            t0.set_phase(id_pred)
+            ei=id_pred
+            isGreen=True
+            auxt=0
+        auxt+=1
+        steps+=1
+
 
         '''i += 1
         if ultimo coche llego a su destino:
@@ -220,8 +115,7 @@ def run(control=control):
             
 
 
-        step += 1
-    print(step)
+    print(steps)
     print('TERMINO')
     print(f1,f2,'\n')
 
@@ -242,8 +136,10 @@ if __name__ == "__main__":
 
     # this script has been called from the command line. It will start sumo as a
     # server, then connect and run
-
-    sumoBinary = checkBinary('sumo')
+    if options.nogui:
+        sumoBinary = checkBinary('sumo')
+    else:
+        sumoBinary = checkBinary('sumo-gui')
     # first, generate the route file for this simulation
 
     # this is the normal way of using traci. sumo is started as a

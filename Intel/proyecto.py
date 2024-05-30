@@ -76,7 +76,6 @@ class Traffic_light:
             self.phase=num
         traci.trafficlight.setPhase(self.ID,self.phase)
         
-        
                         
     
 def metrics(edge,val):
@@ -86,23 +85,49 @@ def metrics(edge,val):
         return traci.edge.getLastStepVehicleNumber(edge)
 def run():
     """execute the TraCI control loop"""
-    step = 0
+    ei = 0 # estado inicial
+    steps = 0
+    dy = 2 # delta amarillo
+    dg = 10 # delta verde
+    auxt = 0
+    isGreen = True
+    i = 1
     t0=Traffic_light("S1","E1","-E3","E5","-E4")
-    print(t0.get_phase_time(),t0.get_phase())
     A=[]
     B=[]
+    id_pred=0
     while traci.simulation.getMinExpectedNumber() > 0:
         traci.simulationStep()
-        if step%5==0:
+        
+        if auxt==dg and isGreen:
+            id_pred=random.choice([0, 2, 4, 6])
+            auxt=0
+            if t0.get_phase()==id_pred:
+                pass
+            else:
+                isGreen=False
+                t0.set_phase(t0.get_phase()+1)
+                ei=ei+1
+        elif auxt==dy and not isGreen :
+            t0.set_phase(id_pred)
+            ei=id_pred
+            isGreen=True
+            auxt=0
+        auxt+=1
+        steps+=1
+                
+        
+       # if step%5==0:
             #t0.evalu(step)
-            t0.set_phase(random.randint(0,8))
-            A.append(metrics("E1",True)+metrics("-E3",True)+metrics("E5",True)+metrics("-E4",True))
-            B.append(metrics("E1",False)+metrics("-E3",False)+metrics("E5",False)+metrics("-E4",False))
-        if step>1000:
-            break  
-        step += 1
-    np.savetxt('wait.csv', A, fmt="%d", delimiter=",")
-    np.savetxt('numcar.csv', B, fmt="%d", delimiter=",")
+        #    t0.set_phase(random.randint(0,8))
+       #     A.append(metrics("E1",True)+metrics("-E3",True)+metrics("E5",True)+metrics("-E4",True))
+        #    B.append(metrics("E1",False)+metrics("-E3",False)+metrics("E5",False)+metrics("-E4",False))
+        #if step>1000:
+         #   break  
+        #step += 1
+    print(f'tiempo {steps} \n')
+    #np.savetxt('wait.csv', A, fmt="%d", delimiter=",")
+    #np.savetxt('numcar.csv', B, fmt="%d", delimiter=",")
     traci.close()
     sys.stdout.flush()
 
