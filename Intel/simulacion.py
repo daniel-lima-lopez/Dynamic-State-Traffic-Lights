@@ -73,7 +73,7 @@ def run(control=control):
     ei = 0 # estado inicial
     steps = 0
     dy = 2 # delta amarillo
-    dg = 10 # delta verde
+    dg = 20 # delta verde
     auxt = 0
     isGreen = True
     i = 1
@@ -108,11 +108,6 @@ def run(control=control):
         auxt+=1
         steps+=1
 
-
-        '''i += 1
-        if ultimo coche llego a su destino:
-            break'''
-            
 
 
     print(steps)

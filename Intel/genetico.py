@@ -16,7 +16,7 @@ from pymoo.util.display.column import Column
 from pymoo.util.display.output import Output
 from pymoo.algorithms.soo.nonconvex.ga import GA
 
-from ipynb.fs.full.test_RNN import TraficLights, Control
+#from ipynb.fs.full.test_RNN import TraficLights, Control
 
 class MyProblem(Problem):
 	def __init__(self,waitcar,numcar, n_atri,num_o,num_est, l, u):
