@@ -16,13 +16,14 @@ from pymoo.util.display.column import Column
 from pymoo.util.display.output import Output
 from pymoo.algorithms.soo.nonconvex.ga import GA
 
-from test_RNN
+from ipynb.fs.full.test_RNN import TraficLights, Control
 
 class MyProblem(Problem):
-	def __init__(self,waitcar,numcar, n_atri,num_o, l, u):
+	def __init__(self,waitcar,numcar, n_atri,num_o,num_est, l, u):
 		self.Wait=waitcar
 		self.Car=numcar
 		self.n_atri=n_atri
+		self.model=Control(num_est)
 		super().__init__(n_var=self.n_atri,
 			n_obj=num_o,
 			n_eq_constr=0,
@@ -30,8 +31,12 @@ class MyProblem(Problem):
 			xu=u)
         
 	def _evaluate(self, x, out, *args, ** kwargs):
+		for i in range(x.shape[0]):
+			problem.model.set_phen(x[i])
+			pred=problem.model.predict()
+
 		out["F"]= [f1,f2]	
-		out["H"]=[phi]
+		#out["H"]=[phi]
                     
 
 #samplig
@@ -60,28 +65,24 @@ class MyMutation(Mutation):
 
 '''
 class MyOutput(Output):
-
     def __init__(self):
         super().__init__()
         self.f1_mean = Column("mean F1",width=20)
         self.f2_mean = Column("mean F2",width=20)
-        
         self.columns += [self.f1_mean, self.f2_mean]
-
     def update(self, algorithm):
-
         super().update(algorithm)
-
         # f son los fitnes de la poblacion actual
         self.f1_mean.set(np.mean(algorithm.pop.get("F")[:,0])) 
         self.f2_mean.set(np.mean(algorithm.pop.get("F")[:,1]))
-
 '''
 
 if __name__=="__main__":
 	waitcar=np.loadtxt("wait.csv")
+	waitcar=waitcar.reshape((waitcar.shape[0],1))
 	numcar=np.loadtxt("numcar.csv")
-	len_a=790;
+	numcar=np.reshape((numcar.shape[0],1))
+	len_a=789;
 	num_o=1;
 	print(np.iinfo(np.int32).min)
 	#l=np.array([np.iinfo(np.int32).min for i in range(len_a)])
@@ -89,7 +90,7 @@ if __name__=="__main__":
 	l=np.array([-1 for i in range(len_a)])
 	u=np.array([1 for i in range(len_a)])
 
-	prob=MyProblem(waitcar,numcar,len_a,num_o, l, u)
+	prob=MyProblem(waitcar,numcar,len_a,num_o,num_est, l, u)
 	algorithm= NSGA2(
 		pop_size=100,
 		sampling=MySampling(),
