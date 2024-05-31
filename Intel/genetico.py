@@ -130,7 +130,7 @@ if __name__=="__main__":
 		pop_size=100,
 		sampling=MySampling(),
 		crossover=SBX(prob=0.9),
-		mutation=PolynomialMutation(prob=1/len_a),
+		mutation=PolynomialMutation(prob=0.2),
     eliminate_duplicates=True
 		)
     
