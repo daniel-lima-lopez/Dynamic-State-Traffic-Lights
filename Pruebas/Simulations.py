@@ -147,6 +147,7 @@ class SimStateNN:
             os.system(f'python "%SUMO_HOME%\\tools\\randomTrips.py" -n osm.net.xml  -o osm.passenger.trips.xml -r osm.passenger.rou.xml -e {steps} -s {seed}  --lanes --validate --period 0.7 --binomial 4')
 
         # crea una red neuronal con la configuracion de gen
+        tf.keras.backend.clear_session() # limpia memoria
         cs = 4 # tamano del vector de entrada evaluado por la red
         es = 4 # numero de configuraciones del semaforo
 
