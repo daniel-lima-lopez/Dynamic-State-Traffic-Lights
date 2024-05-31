@@ -20,6 +20,25 @@ from pymoo.algorithms.soo.nonconvex.ga import GA
 
 from NNControls import *
 from Simulations import *
+import pandas as pd
+
+class MyOutput(Output):
+    def __init__(self):
+        super().__init__()
+        self.meanf = Column("Mean F",width=20)
+        self.minf = Column("Min F",width=20)
+        
+        self.columns += [self.meanf, self.minf]
+        self.metrics = []
+
+    def update(self, algorithm):
+        super().update(algorithm)
+
+        # f son los fitnes de la poblacion actual
+        self.meanf.set(np.mean(algorithm.pop.get("F"))) 
+        self.minf.set(np.mean(algorithm.pop.get("F")))
+
+        self.metrics.append([np.mean(algorithm.pop.get("F")), np.mean(algorithm.pop.get("F"))])
 
 class MyProblem(Problem):
 	def __init__(self,waitcar,numcar, n_atri,num_o,num_est, l, u):
@@ -106,27 +125,40 @@ if __name__=="__main__":
 
 	prob=MyProblem(waitcar,numcar,len_a,num_o,num_est, l, u)
 	algorithm= GA(
-		pop_size=100,
+		pop_size=20,
 		sampling=MySampling(),
 		#crossover=TwoPointCrossover(prob=0.9),
 		#mutation=BitflipMutation(1/len_a),
     eliminate_duplicates=True
 		)
     
-	term=get_termination("n_gen",100)
+	term=get_termination("n_gen",50)
 	
-	#outS = MyOutput()
+	outS = MyOutput()
+
+	print('GPU: ', tf.config.list_physical_devices('GPU'))
+
 	res=minimize(
 		prob,
 		algorithm,
 		termination=term,
 		verbose=True,
-		#output=outS
+		output=outS
 		)
+	
+	info = np.array(outS.metrics)
+	data = pd.DataFrame({'means': info[:,0],
+					     'mins': info[:,1]})
+	data.to_csv('info.csv', index=False)
+	
+	print(info)
+	print(data)
+
 
 	optimo = np.array(res.X)
 	fen = np.array(res.F)
-	print(pareto_op)
-	print(pareto_fen)
+	#print(pareto_op)
+	#print(pareto_fen)
 	np.savetxt("optimo.txt", optimo, delimiter=" ", fmt="%0.3f")
+	np.savetxt("fen.txt", fen, delimiter=" ", fmt="%0.3f")
 
