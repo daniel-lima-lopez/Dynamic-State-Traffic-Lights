@@ -11,6 +11,7 @@ import numpy as np
 
 from sumolib import checkBinary  # noqa
 import traci  # noqa
+import tensorflow as tf
 
 class Traffic_light:
     def __init__(self, id, edge1,edge2,edge3,edge4, dt=5):
@@ -153,7 +154,7 @@ class SimStateNN:
         es = 4 # numero de configuraciones del semaforo
 
         self.NN = nnc.ControlState(cs=4, opts=es)
-        self.NN.predict(np.array([[0. for i in range(cs)]])) ## llamada auxiliar para construir el nodo de la red
+        self.NN.predict(np.array([[0. for i in range(cs)]]), verbose=False) ## llamada auxiliar para construir el nodo de la red
 
         # configura la arquitectura con la configuracion de gen
         self.NN.set_phen(gen)
@@ -175,13 +176,15 @@ class SimStateNN:
             sumoBinary = checkBinary('sumo')
         
         # instanciamos el traci con la configuracion del gui, el .sumocfg (este contiene el .net y .trips)
-        traci.start([sumoBinary, "-c", "osm.sumocfg"])
+        #traci.start([sumoBinary, "-c", "osm.sumocfg"])
+        traci.start([sumoBinary, "-c", "osm.sumocfg",
+                     "--no-warnings"])
 
         # instanciamos un semaforo para la simulacion
         self.TL = Traffic_light("S1","E1","-E3","E5","-E4")
 
     def control(self, cs):
-        outs = self.NN.predict(np.expand_dims(cs, axis=0))[0]
+        outs = self.NN.predict(np.expand_dims(cs, axis=0), verbose=0)[0]
         pred = self.TL.edges[np.argmax(outs)] # elige el estado de maxima probabilidad de softmax
         id = self.TL.edge_id[pred]
         
