@@ -17,6 +17,8 @@ from pymoo.operators.mutation.bitflip import BitflipMutation
 from pymoo.util.display.column import Column
 from pymoo.util.display.output import Output
 from pymoo.algorithms.soo.nonconvex.ga import GA
+from pymoo.operators.crossover.sbx import SBX
+from pymoo.operators.mutation.pm import PolynomialMutation
 
 from NNControls import *
 from Simulations import *
@@ -125,10 +127,10 @@ if __name__=="__main__":
 
 	prob=MyProblem(waitcar,numcar,len_a,num_o,num_est, l, u)
 	algorithm= GA(
-		pop_size=20,
+		pop_size=100,
 		sampling=MySampling(),
-		#crossover=TwoPointCrossover(prob=0.9),
-		#mutation=BitflipMutation(1/len_a),
+		crossover=SBX(prob=0.9),
+		mutation=PolynomialMutation(prob=1/len_a),
     eliminate_duplicates=True
 		)
     
