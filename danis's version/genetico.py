@@ -30,7 +30,7 @@ class MyOutput(Output):
 
         # f son los fitnes de la poblacion actual
         self.meanf.set(np.mean(algorithm.pop.get("F"))) 
-        self.minf.set(np.mean(algorithm.pop.get("F")))
+        self.minf.set(np.min(algorithm.pop.get("F")))
 
         self.metrics.append([np.mean(algorithm.pop.get("F")), np.mean(algorithm.pop.get("F"))])
 
@@ -49,9 +49,7 @@ class MyProblem(Problem):
 	def _evaluate(self, x, out, *args, ** kwargs):
 		# generar los trips
 		f=[]
-		se = np.random.randint(0,1000)
 		max_steps = 4000
-
 		for i in range(x.shape[0]):
 			# se actualiza la red con la configuracion del genotipo
 			if i == 0:
@@ -60,11 +58,10 @@ class MyProblem(Problem):
 				red = SimStateNN(gen=x[i], seed=self.gen, gui=False, verbose=False, worst=max_steps, act_rou=False)
 			red.run()
 			f.append(red.fitness("f0"))
+			red = None # se borra de memoria
 		self.gen += 1
 		f=np.array(f)
-		#f=f.reshape((100,1))
 		out["F"]= f	
-		#out["H"]=[phi]
                     
 
 #samplig
@@ -90,7 +87,7 @@ if __name__=="__main__":
 		pop_size=100,
 		sampling=MySampling(),
 		crossover=SBX(prob=0.9),
-		mutation=PolynomialMutation(prob=0.9),
+		mutation=PolynomialMutation(prob=1/len_a),
     eliminate_duplicates=True
 		)
     
@@ -106,7 +103,8 @@ if __name__=="__main__":
 		algorithm,
 		termination = term,
 		verbose = True,
-		output = outS
+		output = outS,
+		save_history=False
 		)
 	
 	# se recupera informacion de las generaciones
