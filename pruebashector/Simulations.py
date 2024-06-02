@@ -294,7 +294,7 @@ if __name__ == '__main__':
         nog=True
     if options.version==0:
     # instanciamos la simulacion
-        test = SimStateRandom(seed=78, gui=nog, verbose=False,act_rou=True)
+        test = SimStateRandom(seed=78, gui=nog, verbose=False,act_rou=False)
 	
     # se corre la simulacion aleatoria
         test.run()
