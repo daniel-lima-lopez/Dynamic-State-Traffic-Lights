@@ -320,13 +320,13 @@ class SimStateNN:
 
 if __name__ == '__main__':
     # ejemplo semaforos normales
-    test = SimBase(seed=78, gui=True, verbose=False)
+    '''test = SimBase(seed=78, gui=True, verbose=False)
 
     # se corre la simulacion
     test.run()
 
     # se imprime el fitness
-    print(f"\nSteps totales: {test.fitness()}")
+    print(f"\nSteps totales: {test.fitness()}")'''
 
 
     # ejemplo semaforos random
@@ -345,11 +345,11 @@ if __name__ == '__main__':
 
     
     # ejemplo red neuronal
-    '''import pandas as pd
+    import pandas as pd
     max_steps = 4000 # maximo de steps en la simulacion antes de forzar el cierre
     
     # lectura del genotipo
-    gen = pd.read_csv('optimo.txt', header=None).values[:,0]
+    gen = pd.read_csv('optimo_test2.txt', header=None).values[:,0]
     print(gen.shape, gen.dtype)
     
     # instanciamos la simulacion
@@ -361,4 +361,4 @@ if __name__ == '__main__':
     # se imprime el fitness
     print(f"\nSteps totales: {test.fitness('f0')}")
     print(f"f1: {test.fitness('f1')}")
-    print(f"f2: {test.fitness('f2')}\n")'''
+    print(f"f2: {test.fitness('f2')}\n")

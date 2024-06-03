@@ -25,4 +25,4 @@ with open('vsModels.csv', 'w') as f:
     f.write('Exp, Base, NN\n')
     for i in range(exps):
         f.write(f'{i},{steps_base[i]},{steps_nn[i]}\n')
-    f.write(f'MEAN  base: {np.mean(steps_base)}  NN: {np.mean(steps_nn)}')
+    f.write(f'MEAN,{np.mean(steps_base)},{np.mean(steps_nn)}')
