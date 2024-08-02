@@ -1,8 +1,8 @@
 # Dynamic-State-Traffic-Lights
 This project presents a proposal to implement a dynamic state traffic light system, which adapts to conditions in real time to optimize the trafic flow.
 
-The following video shows a comparison between our trained model and a conventional traffic light system:
-![alt](imgs/Ejemplo.mp4)
+[This video](https://youtu.be/caAPAvuc0jY) shows a comparison between our trained model and a conventional traffic light system.
+
 
 ## Instalation
 In order to try our model, a basic installation of SUMO is needed (see SUMO oficial installation). Moreover, the Traffic Control Interface and SUMO python libraries must be installed to. You can install these libraries using pip:
@@ -39,13 +39,3 @@ To train the model from scratch, from the installation folder, move to [Traning]
 cd Training
 ```
 The file [genetico.py](Training/genetico.py) contains the traning routine which produces the optimal weight configuration ([optimo.txt](Training/optimo.txt)). It should be considered that the training process takes approximately 6 hours.
-
-
-
-
-
-
-
-Ejemplo del funcionamiento del proyecto considerando la misma configuracion de rutas:
-https://youtu.be/caAPAvuc0jY
-[![](https://markdown-videos.deta.dev/youtube/caAPAvuc0jY)](https://youtu.be/caAPAvuc0jY)
