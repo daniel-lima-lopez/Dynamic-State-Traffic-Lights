@@ -2,6 +2,7 @@
 This project presents a proposal to implement a dynamic state traffic light system, which adapts to conditions in real time to optimize the trafic flow.
 
 The following video shows a comparison between our trained model and a conventional traffic light system:
+![alt](imgs/Ejemplo.mp4)
 
 ## Instalation
 In order to try our model, a basic installation of SUMO is needed (see SUMO oficial installation). Moreover, the Traffic Control Interface and SUMO python libraries must be installed to. You can install these libraries using pip:
